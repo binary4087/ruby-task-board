@@ -36,6 +36,17 @@ class TaskBoard
     !!task
   end
 
+  def delete_task(column_name, index)
+    if @columns[column_name]
+      task = @columns[column_name].remove_task(index)
+      if task
+        save_data
+        return true
+      end
+    end
+    false
+  end
+
   def display
     puts "\n--- KANBAN BOARD ---"
     @columns.each do |name, col|
