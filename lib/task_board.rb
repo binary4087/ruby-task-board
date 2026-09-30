@@ -47,6 +47,12 @@ class TaskBoard
     false
   end
 
+  def clear_board
+    @columns.each_value { |col| col.tasks.clear }
+    save_data
+    true
+  end
+
   def display
     puts "\n--- KANBAN BOARD ---"
     @columns.each do |name, col|

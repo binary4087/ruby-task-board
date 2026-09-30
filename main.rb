@@ -4,7 +4,7 @@ board = TaskBoard.new
 
 loop do
   board.display
-  puts "\nCommands: add [col] [title] [desc] | move [from] [idx] [to] | delete [col] [idx] | quit"
+  puts "\nCommands: add [col] [title] [desc] | move [from] [idx] [to] | delete [col] [idx] | clear | quit"
   print "> "
   input = gets.chomp.split(' ')
 
@@ -30,6 +30,9 @@ loop do
     else
       puts "Delete failed. Check column names and index."
     end
+  when 'clear'
+    board.clear_board
+    puts "Board cleared!"
   when 'quit'
     break
   else
