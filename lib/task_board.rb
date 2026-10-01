@@ -53,6 +53,18 @@ class TaskBoard
     true
   end
 
+  def search_tasks(query)
+    results = []
+    @columns.each do |col_name, col|
+      col.tasks.each_with_index do |task, idx|
+        if task.title.downcase.include?(query.downcase) || task.description.downcase.include?(query.downcase)
+          results << "[#{col_name}] Index #{idx}: #{task}"
+        end
+      end
+    end
+    results
+  end
+
   def display
     puts "\n--- KANBAN BOARD ---"
     @columns.each do |name, col|

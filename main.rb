@@ -4,7 +4,7 @@ board = TaskBoard.new
 
 loop do
   board.display
-  puts "\nCommands: add [col] [title] [desc] | move [from] [idx] [to] | delete [col] [idx] | clear | quit"
+  puts "\nCommands: add [col] [title] [desc] | move [from] [idx] [to] | delete [col] [idx] | search [query] | clear | quit"
   print "> "
   input = gets.chomp.split(' ')
 
@@ -29,6 +29,19 @@ loop do
       puts "Task deleted!"
     else
       puts "Delete failed. Check column names and index."
+    end
+  when 'search'
+    query = input[1..-1].join(' ')
+    if query.empty?
+      puts "Please provide a search query."
+    else
+      results = board.search_tasks(query)
+      if results.any?
+        puts "Search results:"
+        results.each { |r| puts "  #{r}" }
+      else
+        puts "No tasks found matching '#{query}'."
+      end
     end
   when 'clear'
     board.clear_board
