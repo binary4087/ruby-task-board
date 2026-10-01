@@ -6,6 +6,17 @@ class TaskBoard
   attr_reader :columns
   STORAGE_FILE = 'board_data.json'
 
+  # ANSI Color Codes
+  COLORS = {
+    reset: "\e[0m",
+    bold: "\e[1m",
+    blue: "\e[34m",
+    green: "\e[32m",
+    yellow: "\e[33m",
+    cyan: "\e[36m",
+    red: "\e[31m"
+  }
+
   def initialize
     @columns = {
       "Todo" => Board::Column.new("Todo"),
@@ -66,19 +77,28 @@ class TaskBoard
   end
 
   def display
-    puts "\n--- KANBAN BOARD ---"
+    puts "\n#{COLORS[:bold]}#{COLORS[:cyan]}--- KANBAN BOARD ---#{COLORS[:reset]}"
+    
+    col_colors = {
+      "Todo" => COLORS[:yellow],
+      "In Progress" => COLORS[:blue],
+      "Done" => COLORS[:green]
+    }
+
     @columns.each do |name, col|
-      puts "\n#{name.upcase}"
-      puts "-" * name.length
+      color = col_colors[name] || COLORS[:reset]
+      puts "\n#{color}#{COLORS[:bold]}#{name.upcase}#{COLORS[:reset]}"
+      puts "#{color}" + "-" * name.length + "#{COLORS[:reset]}"
+      
       if col.tasks.empty?
         puts "  (Empty)"
       else
         col.tasks.each_with_index do |task, i|
-          puts "  #{i}: #{task}"
+          puts "  #{COLORS[:bold]}#{i}:#{COLORS[:reset]} #{task}"
         end
       end
     end
-    puts "\n-------------------"
+    puts "\n#{COLORS[:cyan]}-------------------#{COLORS[:reset]}"
   end
 
   private
