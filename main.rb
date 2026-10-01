@@ -4,7 +4,8 @@ board = TaskBoard.new
 
 loop do
   board.display
-  puts "\nCommands: add [col] "[title]" "[desc]" [priority] | move [from] [idx] [to] | delete [col] [idx] | search "[query]" | clear | quit"
+  puts "\nCommands: add [col] \"title\" \"desc\" [priority] | move [from] [idx] [to] | delete [col] [idx] | list [col] | search \"[query]\" | clear | quit"
+  puts "Columns: Todo, In Progress, Done"
   puts "Priority: High, Normal (default)"
   print "> "
   input_str = gets.chomp
@@ -57,6 +58,15 @@ loop do
       end
     else
       puts "Usage: delete [column] [index]"
+    end
+  when 'list'
+    col = input[1]
+    if col
+      unless board.list_column(col)
+        puts "Invalid column. Available: Todo, In Progress, Done"
+      end
+    else
+      puts "Usage: list [column]"
     end
   when 'search'
     query = input[1..-1].join(' ')

@@ -76,6 +76,23 @@ class TaskBoard
     results
   end
 
+  def list_column(column_name)
+    col = @columns[column_name]
+    return nil unless col
+
+    puts "\n#{COLORS[:bold]}#{COLORS[:cyan]}--- #{column_name.upcase} ---#{COLORS[:reset]}"
+    if col.tasks.empty?
+      puts "  (Empty)"
+    else
+      col.tasks.each_with_index do |task, i|
+        task_color = task.priority == "High" ? COLORS[:red] : ""
+        puts "  #{COLORS[:bold]}#{i}:#{COLORS[:reset]} #{task_color}#{task}#{COLORS[:reset]}"
+      end
+    end
+    puts "#{COLORS[:cyan]}-------------------#{COLORS[:reset]}"
+    true
+  end
+
   def display
     puts "\n#{COLORS[:bold]}#{COLORS[:cyan]}--- KANBAN BOARD ---#{COLORS[:reset]}"
     
