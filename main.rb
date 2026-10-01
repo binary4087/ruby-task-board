@@ -4,34 +4,37 @@ board = TaskBoard.new
 
 loop do
   board.display
-  puts "\nCommands: add [col] [title] [desc] [priority] | move [from] [idx] [to] | delete [col] [idx] | search [query] | clear | quit"
+  puts "\nCommands: add [col] "[title]" "[desc]" [priority] | move [from] [idx] [to] | delete [col] [idx] | search "[query]" | clear | quit"
   puts "Priority: High, Normal (default)"
   print "> "
   input_str = gets.chomp
-  input = input_str.split(' ')
+  
+  # Improved parsing using a regex to handle quoted strings
+  input = input_str.scan(/"([^"]*)"|(\S+)/).map { |m| m[0] || m[1] }
+  next if input.empty?
 
   case input[0]
   when 'add'
-    col, title, *desc_and_pri = input[1..-1]
+    col, title, desc, priority = input[1..-1]
     if col && title
-      # The last word might be the priority if it is 'High' or 'Normal'
-      priority = "Normal"
-      description_parts = desc_and_pri
-      if desc_and_pri && !desc_and_pri.empty?
-        last_word = desc_and_pri.last
-        if ["High", "Normal"].include?(last_word)
-          priority = last_word
-          description_parts = desc_and_pri[0...-1]
-        end
+      # Handle optional priority if provided as 4th argument
+      # If priority is not 'High' or 'Normal', treat it as part of description
+      actual_priority = "Normal"
+      actual_desc = desc || ""
+
+      if priority && ["High", "Normal"].include?(priority)
+        actual_priority = priority
+      elsif priority
+        actual_desc = [desc, priority].compact.join(' ')
       end
 
-      if board.add_task(col, title, description_parts.join(' '), priority)
+      if board.add_task(col, title, actual_desc, actual_priority)
         puts "Task added!"
       else
         puts "Invalid column. Available: Todo, In Progress, Done"
       end
     else
-      puts "Usage: add [column] [title] [description] [priority]"
+      puts "Usage: add [column] \"title\" \"description\" [priority]"
     end
   when 'move'
     from, idx_str, to = input[1..-1]
