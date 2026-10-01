@@ -26,9 +26,9 @@ class TaskBoard
     load_data
   end
 
-  def add_task(column_name, title, description)
+  def add_task(column_name, title, description, priority = "Normal")
     if @columns[column_name]
-      task = Board::Task.new(title, description)
+      task = Board::Task.new(title, description, priority)
       @columns[column_name].add_task(task)
       save_data
       true
@@ -94,7 +94,8 @@ class TaskBoard
         puts "  (Empty)"
       else
         col.tasks.each_with_index do |task, i|
-          puts "  #{COLORS[:bold]}#{i}:#{COLORS[:reset]} #{task}"
+          task_color = task.priority == "High" ? COLORS[:red] : ""
+          puts "  #{COLORS[:bold]}#{i}:#{COLORS[:reset]} #{task_color}#{task}#{COLORS[:reset]}"
         end
       end
     end
@@ -106,7 +107,7 @@ class TaskBoard
   def save_data
     data = {}
     @columns.each do |name, col|
-      data[name] = col.tasks.map { |t| { title: t.title, description: t.description } }
+      data[name] = col.tasks.map { |t| { title: t.title, description: t.description, priority: t.priority } }
     end
     File.write(STORAGE_FILE, JSON.pretty_generate(data))
   end
@@ -119,7 +120,7 @@ class TaskBoard
       data.each do |col_name, tasks|
         if @columns[col_name]
           tasks.each do |t_data|
-            @columns[col_name].add_task(Board::Task.new(t_data['title'], t_data['description']))
+            @columns[col_name].add_task(Board::Task.new(t_data['title'], t_data['description'], t_data['priority'] || "Normal"))
           end
         end
       end

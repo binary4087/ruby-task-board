@@ -4,22 +4,34 @@ board = TaskBoard.new
 
 loop do
   board.display
-  puts "\nCommands: add [col] [title] [desc] | move [from] [idx] [to] | delete [col] [idx] | search [query] | clear | quit"
+  puts "\nCommands: add [col] [title] [desc] [priority] | move [from] [idx] [to] | delete [col] [idx] | search [query] | clear | quit"
+  puts "Priority: High, Normal (default)"
   print "> "
   input_str = gets.chomp
   input = input_str.split(' ')
 
   case input[0]
   when 'add'
-    col, title, *desc = input[1..-1]
+    col, title, *desc_and_pri = input[1..-1]
     if col && title
-      if board.add_task(col, title, desc.join(' '))
+      # The last word might be the priority if it is 'High' or 'Normal'
+      priority = "Normal"
+      description_parts = desc_and_pri
+      if desc_and_pri && !desc_and_pri.empty?
+        last_word = desc_and_pri.last
+        if ["High", "Normal"].include?(last_word)
+          priority = last_word
+          description_parts = desc_and_pri[0...-1]
+        end
+      end
+
+      if board.add_task(col, title, description_parts.join(' '), priority)
         puts "Task added!"
       else
         puts "Invalid column. Available: Todo, In Progress, Done"
       end
     else
-      puts "Usage: add [column] [title] [description]"
+      puts "Usage: add [column] [title] [description] [priority]"
     end
   when 'move'
     from, idx_str, to = input[1..-1]
